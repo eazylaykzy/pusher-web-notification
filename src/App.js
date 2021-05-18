@@ -8,6 +8,33 @@ import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import Noti from './notify.mp3';
 
+// Override the default scope of '/' with './', so that the registration applies
+// to the current directory and everything underneath it.
+navigator.serviceWorker.register('service-worker.js', {scope: './'}).then(function(registration) {
+  // At this point, registration has taken place.
+  // The service worker will not handle requests until this page and any
+  // other instances of this page (in other tabs, etc.) have been
+  // closed/reloaded.
+  document.querySelector('#register').textContent = 'succeeded';
+  console.log('Succeeded')
+
+  var serviceWorker;
+  if (registration.installing) {
+    serviceWorker = registration.installing;
+    console.log(`installing: ${serviceWorker}`)
+  } else if (registration.waiting) {
+    serviceWorker = registration.waiting;
+    console.log(`waiting: ${serviceWorker}`)
+  } else if (registration.active) {
+    serviceWorker = registration.active;
+    console.log(`active: ${serviceWorker}`)
+  }
+}).catch(function(error) {
+  // Something went wrong during registration. The service-worker.js file
+  // might be unavailable or contain a syntax error.
+  console.log(`Failed: ${error}`)
+});
+
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
@@ -66,6 +93,7 @@ function App() {
   });
 
   console.log('navigator.serviceWorker: ', navigator.serviceWorker);
+  console.log('navigator.serviceWorker.controller: ', navigator.serviceWorker.controller);
 
   /*navigator.serviceWorker.onmessage = async (event) => {
     console.log('We dey here!!!');
