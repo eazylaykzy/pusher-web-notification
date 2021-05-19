@@ -10,7 +10,7 @@ self.addEventListener('activate', event => {
   // event.waitUntil(clients.claim());
 });
 
-self.addEventListener('fetch', event => {
+addEventListener('fetch', event => {
   event.waitUntil(async function() {
     // Exit early if we don't have access to the client.
     // Eg, if it's cross-origin.
@@ -33,10 +33,8 @@ self.addEventListener('fetch', event => {
       // This method triggers the default notification handling logic offered by
       // the Beams SDK. This gives you an opportunity to modify the payload.
       // E.g. payload.notification.title = "A client-determined title!"
-      console.log('After calling CLIENTS!!! payload: ', payload);
       client.postMessage(payload);
       pushEvent.waitUntil(handleNotification(payload));
-      console.log('After ALL CLIENTS!!! payload: ', payload);
     }
   }());
 });

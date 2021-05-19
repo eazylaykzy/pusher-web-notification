@@ -28,43 +28,36 @@ const beamsClient = new PusherPushNotifications.Client({
 function App() {
   const notiRef = useRef();
   const [show, setShow] = useState(false);
-  const [enableNotifications, setEnableNotifications] = useState(false);
   const [notification, setNotification] = useState({title: '', body: ''});
   const [isTokenFound, setTokenFound] = useState({found: false, token: ''});
 
-  // This is necessary for Firefox, Brave and Safari
+  // This is necessary for for all browsers, it will enable user interaction with the audio, and push notification,
+  // I think thee best way to implement this is to call it on the admin `login` button, there the admin will either
+  // allow or deny access to push notifications and sounds.
   const enableNotification = () => {
     beamsClient.start().then(() => {
       notiRef.current.click();
-      setEnableNotifications(true)
-      console.log("Registered with beams!");
     });
   }
 
   useEffect(() => {
-    // Check if push messaging is supported, this will make the app not
-    // to crash on Safari or any other non-supported browsers.
-    // if (('PushManager' in window)) {
-      beamsClient.start()
-        .then((beamsClient) => beamsClient.getDeviceId())
-        .then((deviceId) => {
-          console.log("Successfully registered with Beams. Device ID:", deviceId);
-          return setTokenFound({found: true, token: deviceId});
-        })
-        .then(() => beamsClient.addDeviceInterest("trades"))
-        .then(() => beamsClient.getDeviceInterests())
-        .then((interests) => console.log("Current interests:", interests))
-        .catch(console.error);
-    // }
-  }, [enableNotifications, notification]);
+    beamsClient.start()
+      .then((beamsClient) => beamsClient.getDeviceId())
+      .then((deviceId) => {
+        console.log("Successfully registered with Beams. Device ID:", deviceId);
+        return setTokenFound({found: true, token: deviceId});
+      })
+      .then(() => beamsClient.addDeviceInterest("trades"))
+      .then(() => beamsClient.getDeviceInterests())
+      .then((interests) => console.log("Current interests:", interests))
+      .catch(console.error);
+  }, [notification]);
 
   navigator.serviceWorker.addEventListener('message', async event => {
-    console.log('event.data: ', event.data);
     setNotification({...event.data.notification});
     setShow(true);
     notiRef.current.play();
   });
-
 
   return (
     <Container maxWidth="sm">

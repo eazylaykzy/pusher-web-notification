@@ -21,7 +21,7 @@ ReactDOM.render(
 
 window.addEventListener('load', () => {
   navigator.serviceWorker.register('/service-worker.js').then(
-    registered => console.log('We got it registered!')
+    registered => console.log('Registered!')
   ).catch(err => {
     console.log('Could not register SW: ', err)
   });
